@@ -1,5 +1,5 @@
 import React from "react";
-import api from '../utils/Api.js'; //Подключение к апи
+import api from '../utils/api.js'; //Подключение к апи
 import Card from './Card'
 
 class Main extends React.Component {
