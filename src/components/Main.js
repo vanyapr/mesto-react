@@ -25,15 +25,15 @@ class Main extends React.Component {
         userName: data.name,
         userDescription: data.about,
         userAvatar: data.avatar,
-      }).catch(error => console.log(error));
-    });
+      })
+    }).catch(error => console.log(error));;
 
     //Получаем список карточек по апи
     api.getCardsList().then(data => {
       this.setState({
         cards: data
-      }).catch(error => console.log(error));
-    })
+      });
+    }).catch(error => console.log(error));
   }
 
   render () {
