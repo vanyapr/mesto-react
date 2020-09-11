@@ -104,3 +104,5 @@ class Api {
 
 const api = new Api(token, cohort);
 export default api;
+
+//Коментарий для проверки разрешения конфликта с гитхабом
