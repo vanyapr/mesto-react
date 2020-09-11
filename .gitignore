@@ -2,6 +2,7 @@
 node_modules
 dist
 tokens.md
+/build
 
 #Поскольку я использую  IDE PhpStorm под MacOs, мне нужно скрывать дополнительные файлы в проекте
 
