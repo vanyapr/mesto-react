@@ -15,21 +15,29 @@ function EditProfilePopup (props) {
     changeDescription(event.target.value);
   }
 
+  function handleSubmit (event) {
+    event.preventDefault();
+
+    props.onUpdateUser({
+      name,
+      about: description
+    })
+  }
+
   React.useEffect(() => {
     changeName(currentUser.name);
     changeDescription(currentUser.about);
-    console.log(currentUser)
   }, [currentUser])
 
   return (
-    <PopupWithForm title="Редактировать профиль" buttonText="Сохранить" name="profile" isOpen={props.isOpen} onClose={props.onClose} children={
+    <PopupWithForm title="Редактировать профиль" buttonText="Сохранить" name="profile" isOpen={props.isOpen} onClose={props.onClose} onSubmit={handleSubmit} children={
       <>
         <div className="form__input-container">
-          <input onChange={onNameChange} value={name} type="text" name="profileName" className="form__input form__input_value_name" id="profile-name" minLength="2" maxLength="40" defaultValue="" aria-label="Имя" required/>
+          <input onChange={onNameChange} defaultValue={name} type="text" name="profileName" className="form__input form__input_value_name" id="profile-name" minLength="2" maxLength="40" aria-label="Имя" required/>
           <span className="form__error" id="profile-name-error"></span>
         </div>
         <div className="form__input-container">
-          <input onChange={onDescriptionChange} value={description} type="text" name="profileDescription" className="form__input form__input_value_description" id="profile-description" minLength="2" maxLength="40" defaultValue="" aria-label="Род деятельности" required/>
+          <input onChange={onDescriptionChange} defaultValue={description} type="text" name="profileDescription" className="form__input form__input_value_description" id="profile-description" minLength="2" maxLength="40" aria-label="Род деятельности" required/>
           <span className="form__error" id="profile-description-error"></span>
         </div>
       </>

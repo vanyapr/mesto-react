@@ -46,6 +46,13 @@ class App extends React.Component {
     });
   }
 
+  onUpdateUser = (newUserData) => {
+    api.saveUserInfo(newUserData).then(responceData => {
+      this.setState({currentUser: responceData});
+      this.closeAllPopups();
+    }).catch(error => console.log(error))
+  }
+
   componentDidMount() {
     api.getUserInfo().then(data => {
       this.setState({
@@ -61,7 +68,7 @@ class App extends React.Component {
         <Main onEditProfile={this.handleEditProfileClick} onAddPlace={this.handleAddPlaceClick} onEditAvatar={this.handleEditAvatarClick} onCardClick={this.handleCardClick}/>
         <Footer/>
 
-        <EditProfilePopup isOpen={this.state.isEditProfilePopupOpen} onClose={this.closeAllPopups} />
+        <EditProfilePopup isOpen={this.state.isEditProfilePopupOpen} onClose={this.closeAllPopups} onUpdateUser={this.onUpdateUser} />
 
         <PopupWithForm title="Новое место" buttonText="Создать" name="place" isOpen={this.state.isAddPlacePopupOpen} onClose={this.closeAllPopups}  children={
           <>
