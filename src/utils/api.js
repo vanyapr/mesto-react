@@ -1,4 +1,4 @@
-import {token, cohort} from './utils.js'
+import {token, cohort} from './utils.js';
 
 class Api {
   //Конструктор принимает токен
@@ -70,9 +70,17 @@ class Api {
     }).then(this._processResponse);
   }
 
-  addLikeToCard (cardId) {
+  changeCardLike (cardId, needLike) {
+    let requestMethod = '';
+
+    if (needLike) {
+      requestMethod = 'PUT'; //Если вторым параметром пришло true, ставим лайк
+    } else {
+      requestMethod = 'DELETE'; //Если вторым параметром пришло false, снимаем лайк
+    }
+
     return fetch(`https://mesto.nomoreparties.co/v1/${this._cohort}/cards/likes/${cardId}`, {
-      method: 'PUT',
+      method: requestMethod,
       headers: {
         authorization: this._token,
         'Content-Type': 'application/json'
@@ -80,15 +88,26 @@ class Api {
     }).then(this._processResponse);
   }
 
-  removeLikeFromCard (cardId) {
-    return fetch(`https://mesto.nomoreparties.co/v1/${this._cohort}/cards/likes/${cardId}`, {
-      method: 'DELETE',
-      headers: {
-        authorization: this._token,
-        'Content-Type': 'application/json'
-      }
-    }).then(this._processResponse);
-  }
+  // FIXME: DEPRECATED
+  // addLikeToCard (cardId) {
+  //   return fetch(`https://mesto.nomoreparties.co/v1/${this._cohort}/cards/likes/${cardId}`, {
+  //     method: 'PUT',
+  //     headers: {
+  //       authorization: this._token,
+  //       'Content-Type': 'application/json'
+  //     }
+  //   }).then(this._processResponse);
+  // }
+  //
+  // removeLikeFromCard (cardId) {
+  //   return fetch(`https://mesto.nomoreparties.co/v1/${this._cohort}/cards/likes/${cardId}`, {
+  //     method: 'DELETE',
+  //     headers: {
+  //       authorization: this._token,
+  //       'Content-Type': 'application/json'
+  //     }
+  //   }).then(this._processResponse);
+  // }
 
   changeAvatar (avatarData) {
     return fetch(`https://mesto.nomoreparties.co/v1/${this._cohort}/users/me/avatar`, {

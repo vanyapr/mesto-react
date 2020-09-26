@@ -1,9 +1,22 @@
 import React from "react";
+import {currentUserContext} from "../contexts/currentUserContext";
 
-function Card (props) {
+const Card = React.memo((props) => {
+  const currentUser = React.useContext(currentUserContext);
+  const isOwn = currentUser._id === props.card.owner._id;
+  const isLiked = props.card.likes.some(like => like._id === currentUser._id); //Проверяем, установлен ли лайк
+  const cardLikeButtonClassName = 'place__like_status_active'; //Класс установленного лайка
 
-  function handleClick() {
-    props.cardClick(props.card.link);
+  function handleClick () {
+    props.onCardClick(props.card);
+  }
+
+  function handleLike () {
+    props.onCardLike(props.card);
+  }
+
+  function handleDelete () {
+    props.onCardDelete(props.card);
   }
 
   return (
@@ -12,13 +25,13 @@ function Card (props) {
       <h2 className="place__title">{props.card.name}</h2>
 
       <div className="place__like-container">
-        <button className="place__like" title="Добавить место в избранное">Добавить место в избранное</button>
+        <button className={!isLiked? "place__like" : `place__like ${cardLikeButtonClassName}`} title="Поставить месту лайк" onClick={handleLike}>Поставить месту лайк</button>
         <p className="place__likes-count" title={`Лайков - ${props.card.likes.length}`}>{props.card.likes.length}</p>
       </div>
 
-      <button className="place__delete" title="Удалить место">Удалить место</button>
+      {isOwn && <button className="place__delete" title="Удалить место" onClick={handleDelete}>Удалить место</button> }
     </li>
   )
-}
+})
 
 export default Card

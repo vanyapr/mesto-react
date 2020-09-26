@@ -4,6 +4,9 @@ import Footer from './Footer';
 import Main from './Main'
 import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
+import EditProfilePopup from "./EditProfilePopup";
+import api from '../utils/api.js'; //Подключение к апи
+import { currentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +16,8 @@ class App extends React.Component {
       isEditAvatarPopupOpen: false,
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
-      selectedCard: ''
+      selectedCard: '',
+      currentUser: ''
     }
   }
 
@@ -29,8 +33,8 @@ class App extends React.Component {
     this.setState({isAddPlacePopupOpen: true});
   }
 
-  handleCardClick = (url) => {
-    this.setState({selectedCard: url});
+  handleCardClick = (card) => {
+    this.setState({selectedCard: card});
   }
 
   closeAllPopups = () => {
@@ -42,24 +46,22 @@ class App extends React.Component {
     });
   }
 
+  componentDidMount() {
+    api.getUserInfo().then(data => {
+      this.setState({
+        currentUser: data
+      });
+    }).catch(error => console.log(error));
+  }
+
   render() {
     return (
-      <>
+      <currentUserContext.Provider value={this.state.currentUser}>
         <Header/>
         <Main onEditProfile={this.handleEditProfileClick} onAddPlace={this.handleAddPlaceClick} onEditAvatar={this.handleEditAvatarClick} onCardClick={this.handleCardClick}/>
         <Footer/>
-        <PopupWithForm title="Редактировать профиль" buttonText="Сохранить" name="profile" isOpen={this.state.isEditProfilePopupOpen} onClose={this.closeAllPopups} children={
-          <>
-            <div className="form__input-container">
-              <input type="text" name="profileName" className="form__input form__input_value_name" id="profile-name" minLength="2" maxLength="40" defaultValue="" aria-label="Имя" required/>
-              <span className="form__error" id="profile-name-error"></span>
-            </div>
-            <div className="form__input-container">
-              <input type="text" name="profileDescription" className="form__input form__input_value_description" id="profile-description" minLength="2" maxLength="40" defaultValue="" aria-label="Род деятельности" required/>
-              <span className="form__error" id="profile-description-error"></span>
-            </div>
-          </>
-        }/>
+
+        <EditProfilePopup isOpen={this.state.isEditProfilePopupOpen} onClose={this.closeAllPopups} />
 
         <PopupWithForm title="Новое место" buttonText="Создать" name="place" isOpen={this.state.isAddPlacePopupOpen} onClose={this.closeAllPopups}  children={
           <>
@@ -86,7 +88,7 @@ class App extends React.Component {
         <PopupWithForm title="Вы уверены?" buttonText="Да" name="confirm" onClose={this.closeAllPopups} />
 
         <ImagePopup onClose={this.closeAllPopups} card={this.state.selectedCard}/>
-      </>
+      </currentUserContext.Provider>
     );
   }
 

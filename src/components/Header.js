@@ -1,7 +1,7 @@
 import React from 'react';
 import logoPath from "../images/logo.svg";
 
-function Header () {
+const Header = React.memo(() => {
   return (
     <header className="header">
       <a href="/" title="Место" className="logo">
@@ -9,6 +9,6 @@ function Header () {
       </a>
     </header>
   )
-}
+})
 
 export default Header;

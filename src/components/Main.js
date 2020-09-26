@@ -1,33 +1,54 @@
 import React from "react";
 import api from '../utils/api.js'; //Подключение к апи
-// Объясню по поводу текста в профиле: прошлый ревьюер заполнил мой профиль вот так:
-// https://www.dropbox.com/s/g0cp24paz8adp3m/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202020-08-24%20%D0%B2%2002.02.00.png?dl=0
-// Мне с одной стороны пофиг, с другой стороны я иронично намекнул, что такое не совсем этично с его стороны. В этой проектной работе просто не стал менять описание
-// потому что ещё не реализован нужный функционал. Извиняюсь за возможное недопонимание.
-import Card from './Card'
+import Card from './Card';
+import { currentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера
 
-class Main extends React.Component {
+class Main extends React.PureComponent {
+
+  static contextType = currentUserContext;
+
   constructor(props) {
     super(props);
 
     this.state = {
-      userName: '',
-      userDescription: '',
-      userAvatar: '',
       cards: []
     }
   }
 
-  componentDidMount() {
-    //Получаем данные юзера по апи
-    api.getUserInfo().then(data => {
-      this.setState({
-        userName: data.name,
-        userDescription: data.about,
-        userAvatar: data.avatar,
-      })
-    }).catch(error => console.log(error));;
+  handleCardLike = (card) => {
+    //Проверяем, лайкнута ли карточка
+    const isLiked = card.likes.some(like => like._id === this.context._id);
 
+    // Давать готовые куски кода в проектной работе - такое себе, напишу эту часть сам
+    // Если карта "лайкнута", передаем в апи "не нужен лайк" чтобы снять лайк при клике
+    // Метод вернёт карточку места с обновленным числом лайков (объект, элемент массива)
+    api.changeCardLike(card._id, !isLiked).then(updatedCard => {
+        //Обновить число лайков на карточках (внести изменение в стейт списка карточек)
+        const newCardsState = this.state.cards.map(item => {
+          //Находим в массиве карточку с нужным ._id
+          if (item._id === updatedCard._id) {
+            return updatedCard; //Возвращаем вместо неё новую карточку, полученную в ответе апи
+          } else {
+            return item;
+          }
+        })
+
+        this.setState({cards: newCardsState}); //Обновили состояние карточек
+     }).then().catch(error => console.log(error));
+  }
+
+  handleCardDelete = (card) => {
+    api.deleteCard(card._id).then(responce => {
+        //После удаления в апи надо удалить карточку из списка карточек
+        const reducedCards = this.state.cards.filter(item => item._id !== card._id);//В массиве оставляем только карточки, у которых id не совпадают с удаляемой карточкой
+        this.setState({cards: reducedCards});
+      }
+    ).catch(error => {
+      console.log(error);
+    })
+  }
+
+  componentDidMount() {
     //Получаем список карточек по апи
     api.getCardsList().then(data => {
       this.setState({
@@ -42,12 +63,12 @@ class Main extends React.Component {
         {/* Профиль пользователя */}
         <section className="profile">
           <div className="profile__avatar-container">
-            <img src={this.state.userAvatar} alt="Жак-Ив Кусто" className="profile__avatar" onClick={this.props.onEditAvatar}/>
+            <img src={this.context.avatar} alt="Жак-Ив Кусто" className="profile__avatar" onClick={this.props.onEditAvatar}/>
           </div>
 
           <div className="profile__info">
-            <h1 className="profile__title">{this.state.userName}</h1>
-            <p className="profile__description">{this.state.userDescription}</p>
+            <h1 className="profile__title">{this.context.name}</h1>
+            <p className="profile__description">{this.context.about}</p>
             <button className="profile__edit-button" title="Редактировать профиль" onClick={this.props.onEditProfile}>Редактировать профиль</button>
           </div>
 
@@ -60,7 +81,7 @@ class Main extends React.Component {
           {/*  Контейнер для рендера списка мест  */}
           <ul className="places__list">
             {this.state.cards.map((item, key) => (
-              <Card card={item} key={key} cardClick={this.props.onCardClick}/>
+              <Card card={item} key={key} onCardClick={this.props.onCardClick} onCardLike={this.handleCardLike} onCardDelete={this.handleCardDelete}/>
             ))}
           </ul>
           {/* // Контейнер для рендера списка мест   */}
