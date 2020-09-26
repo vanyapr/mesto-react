@@ -1,8 +1,8 @@
 import React from "react";
-import {currentUserContext} from "../contexts/currentUserContext";
+import {CurrentUserContext} from "../contexts/currentUserContext";
 
 const Card = React.memo((props) => {
-  const currentUser = React.useContext(currentUserContext);
+  const currentUser = React.useContext(CurrentUserContext);
   const isOwn = currentUser._id === props.card.owner._id;
   const isLiked = props.card.likes.some(like => like._id === currentUser._id); //Проверяем, установлен ли лайк
   const cardLikeButtonClassName = 'place__like_status_active'; //Класс установленного лайка

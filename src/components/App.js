@@ -6,7 +6,7 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import EditProfilePopup from "./EditProfilePopup";
 import api from '../utils/api.js'; //Подключение к апи
-import { currentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера
+import { CurrentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера
 
 class App extends React.Component {
   constructor(props) {
@@ -56,7 +56,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <currentUserContext.Provider value={this.state.currentUser}>
+      <CurrentUserContext.Provider value={this.state.currentUser}>
         <Header/>
         <Main onEditProfile={this.handleEditProfileClick} onAddPlace={this.handleAddPlaceClick} onEditAvatar={this.handleEditAvatarClick} onCardClick={this.handleCardClick}/>
         <Footer/>
@@ -88,7 +88,7 @@ class App extends React.Component {
         <PopupWithForm title="Вы уверены?" buttonText="Да" name="confirm" onClose={this.closeAllPopups} />
 
         <ImagePopup onClose={this.closeAllPopups} card={this.state.selectedCard}/>
-      </currentUserContext.Provider>
+      </CurrentUserContext.Provider>
     );
   }
 

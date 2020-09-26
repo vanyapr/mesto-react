@@ -1,11 +1,11 @@
 import React from "react";
 import api from '../utils/api.js'; //Подключение к апи
 import Card from './Card';
-import { currentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера
+import { CurrentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера
 
 class Main extends React.PureComponent {
 
-  static contextType = currentUserContext;
+  static contextType = CurrentUserContext;
 
   constructor(props) {
     super(props);
