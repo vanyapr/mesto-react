@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import api from '../utils/api.js'; //Подключение к апи
 import Card from './Card';
 import { CurrentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера

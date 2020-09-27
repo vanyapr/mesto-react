@@ -1,5 +1,5 @@
-import React from "react";
-import {CurrentUserContext} from "../contexts/currentUserContext";
+import React from 'react';
+import {CurrentUserContext} from '../contexts/currentUserContext';
 
 const Card = React.memo((props) => {
   const currentUser = React.useContext(CurrentUserContext);
