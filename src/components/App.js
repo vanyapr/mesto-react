@@ -18,7 +18,8 @@ class App extends React.Component {
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
       selectedCard: '',
-      currentUser: ''
+      currentUser: '',
+      cards: []
     }
   }
 
@@ -63,10 +64,49 @@ class App extends React.Component {
     }).catch(error => console.log(error))
   }
 
+  handleCardLike = (card) => {
+    //Проверяем, лайкнута ли карточка
+    const isLiked = card.likes.some(like => like._id === this.context._id);
+
+    // Давать готовые куски кода в проектной работе - такое себе, напишу эту часть сам
+    // Если карта "лайкнута", передаем в апи "не нужен лайк" чтобы снять лайк при клике
+    // Метод вернёт карточку места с обновленным числом лайков (объект, элемент массива)
+    api.changeCardLike(card._id, !isLiked).then(updatedCard => {
+      //Обновить число лайков на карточках (внести изменение в стейт списка карточек)
+      const newCardsState = this.state.cards.map(item => {
+        //Находим в массиве карточку с нужным   ._id
+        if (item._id === updatedCard._id) {
+          return updatedCard; //Возвращаем вместо неё новую карточку, полученную в ответе апи
+        } else {
+          return item;
+        }
+      })
+
+      this.setState({cards: newCardsState}); //Обновили состояние карточек
+    }).then().catch(error => console.log(error));
+  }
+
+  handleCardDelete = (card) => {
+    api.deleteCard(card._id).then(responce => {
+        //После удаления в апи надо удалить карточку из списка карточек
+        const reducedCards = this.state.cards.filter(item => item._id !== card._id);//В массиве оставляем только карточки, у которых id не совпадают с удаляемой карточкой
+        this.setState({cards: reducedCards});
+      }
+    ).catch(error => {
+      console.log(error);
+    })
+  }
+
   componentDidMount() {
     api.getUserInfo().then(data => {
       this.setState({
         currentUser: data
+      });
+    }).catch(error => console.log(error));
+
+    api.getCardsList().then(data => {
+      this.setState({
+        cards: data
       });
     }).catch(error => console.log(error));
   }
@@ -75,7 +115,7 @@ class App extends React.Component {
     return (
       <CurrentUserContext.Provider value={this.state.currentUser}>
         <Header/>
-        <Main onEditProfile={this.handleEditProfileClick} onAddPlace={this.handleAddPlaceClick} onEditAvatar={this.handleEditAvatarClick} onCardClick={this.handleCardClick}/>
+        <Main onEditProfile={this.handleEditProfileClick} onAddPlace={this.handleAddPlaceClick} onEditAvatar={this.handleEditAvatarClick} onCardClick={this.handleCardClick} cards={this.state.cards} onCardLike={this.handleCardLike} onCardDelete={this.handleCardDelete}/>
         <Footer/>
 
         <EditProfilePopup isOpen={this.state.isEditProfilePopupOpen} onClose={this.closeAllPopups} onUpdateUser={this.handleUpdateUser} />
