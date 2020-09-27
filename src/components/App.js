@@ -5,7 +5,8 @@ import Main from './Main'
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
-import EditAvatarPopup from './EditAvatarPopup'
+import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
 import api from '../utils/api.js'; //Подключение к апи
 import { CurrentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера
 
@@ -97,6 +98,13 @@ class App extends React.Component {
     })
   }
 
+  handleAddPlaceSubmit = (newCardObject) => {
+    api.addCard(newCardObject).then(responceData => {
+      this.setState({cards: [...this.state.cards, responceData] });
+      this.closeAllPopups();
+    }).catch(error => console.log(error));
+  }
+
   componentDidMount() {
     api.getUserInfo().then(data => {
       this.setState({
@@ -108,6 +116,7 @@ class App extends React.Component {
       this.setState({
         cards: data
       });
+      console.log(data);
     }).catch(error => console.log(error));
   }
 
@@ -120,18 +129,7 @@ class App extends React.Component {
 
         <EditProfilePopup isOpen={this.state.isEditProfilePopupOpen} onClose={this.closeAllPopups} onUpdateUser={this.handleUpdateUser} />
 
-        <PopupWithForm title="Новое место" buttonText="Создать" name="place" isOpen={this.state.isAddPlacePopupOpen} onClose={this.closeAllPopups}  children={
-          <>
-            <div className="form__input-container">
-              <input type="text" name="placeName" className="form__input form__input_value_place-name" id="place-name" minLength="1" maxLength="30" defaultValue="" placeholder="Название" aria-label="Название места" required/>
-              <span className="form__error" id="place-name-error"></span>
-            </div>
-            <div className="form__input-container">
-              <input type="url" name="placeImage" className="form__input form__input_value_image" id="place-image"  defaultValue="" placeholder="Ссылка на картинку" aria-label="Ссылка на картинку" required/>
-              <span className="form__error" id="place-image-error"></span>
-            </div>
-          </>
-        }/>
+        <AddPlacePopup isOpen={this.state.isAddPlacePopupOpen} onClose={this.closeAllPopups} onAddPlace={this.handleAddPlaceSubmit} />
 
 
 
