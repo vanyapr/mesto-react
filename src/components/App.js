@@ -55,9 +55,12 @@ class App extends React.Component {
   }
 
   handleUpdateAvatar = (newAvatarData) => {
-    //Update avatar
-    console.log(newAvatarData);
-    console.log(this.state.currentUser);
+    //Обновить аватар
+    api.changeAvatar(newAvatarData).then(responceData => {
+      //Обновить контекст
+      this.setState({currentUser: responceData});
+      this.closeAllPopups();
+    }).catch(error => console.log(error))
   }
 
   componentDidMount() {
