@@ -18,6 +18,7 @@ class App extends React.Component {
       isEditAvatarPopupOpen: false,
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
+      confirmDeletePopupOpen: false,
       selectedCard: '',
       currentUser: '',
       cards: []
@@ -45,6 +46,7 @@ class App extends React.Component {
       isEditAvatarPopupOpen: false,
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
+      confirmDeletePopupOpen: false,
       selectedCard: ''
     });
   }
@@ -88,14 +90,29 @@ class App extends React.Component {
   }
 
   handleCardDelete = (card) => {
+    //Нам надо удалять карточку только после подтверждения
+    //0) Создать переменную с карточкой, которую мы будем удалять
+    this.cardToDelete  = card;
+    //1) Открыть попап подтверждения удаления передав в него пропсом
+    this.setState({confirmDeletePopupOpen: true});
+    //2) Если юзер подтвердил удаление, удалить карточку
+    //2) Если юзер не подтвердил удаление, ничего не делать
+  }
+
+  cardDelete = (event) => {
+    event.preventDefault();
+    //Передаём переменную в компоненте при помощи переменной класса
+    let card = this.cardToDelete;
     api.deleteCard(card._id).then(responce => {
         //После удаления в апи надо удалить карточку из списка карточек
         const reducedCards = this.state.cards.filter(item => item._id !== card._id);//В массиве оставляем только карточки, у которых id не совпадают с удаляемой карточкой
         this.setState({cards: reducedCards});
-      }
-    ).catch(error => {
+        this.cardToDelete.current = {};
+      }).catch(error => {
       console.log(error);
     })
+    //Закрыть все попапы
+    this.closeAllPopups();
   }
 
   handleAddPlaceSubmit = (newCardObject) => {
@@ -116,7 +133,6 @@ class App extends React.Component {
       this.setState({
         cards: data
       });
-      console.log(data);
     }).catch(error => console.log(error));
   }
 
@@ -128,13 +144,8 @@ class App extends React.Component {
         <Footer/>
 
         <EditProfilePopup isOpen={this.state.isEditProfilePopupOpen} onClose={this.closeAllPopups} onUpdateUser={this.handleUpdateUser} />
-
         <AddPlacePopup isOpen={this.state.isAddPlacePopupOpen} onClose={this.closeAllPopups} onAddPlace={this.handleAddPlaceSubmit} />
-
-
-
-        <PopupWithForm title="Вы уверены?" buttonText="Да" name="confirm" onClose={this.closeAllPopups} />
-
+        <PopupWithForm title="Вы уверены?" buttonText="Да" name="confirm" isOpen={this.state.confirmDeletePopupOpen} onSubmit={this.cardDelete} />
         <EditAvatarPopup onClose={this.closeAllPopups} isOpen={this.state.isEditAvatarPopupOpen} onUpdateAvatar={this.handleUpdateAvatar} />
         <ImagePopup onClose={this.closeAllPopups} card={this.state.selectedCard}/>
       </CurrentUserContext.Provider>

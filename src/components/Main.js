@@ -3,7 +3,6 @@ import Card from './Card';
 import { CurrentUserContext } from '../contexts/currentUserContext'; //Контекст текущего юзера
 
 class Main extends React.PureComponent {
-
   static contextType = CurrentUserContext;
 
   constructor(props) {
