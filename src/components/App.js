@@ -117,7 +117,7 @@ class App extends React.Component {
 
   handleAddPlaceSubmit = (newCardObject) => {
     api.addCard(newCardObject).then(responceData => {
-      this.setState({cards: [...this.state.cards, responceData] });
+      this.setState({cards: [responceData, ...this.state.cards] });
       this.closeAllPopups();
     }).catch(error => console.log(error));
   }
