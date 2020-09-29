@@ -7,7 +7,8 @@ function EditProfilePopup (props) {
   const currentUser = React.useContext(CurrentUserContext);
 
   function handleFormChange (event) {
-    changeFormValues({...formValues, [event.target.name]: event.target.value});
+    const {name, value} = event.target;
+    changeFormValues({...formValues, [name]: value});
   }
 
   function handleSubmit (event) {
